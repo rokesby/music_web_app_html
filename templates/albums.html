@@ -1,0 +1,23 @@
+<!-- This is a HTML document -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>List of Albums</title>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    
+    <h1>Albums</h1>
+  
+  
+      {% for item in albums %}
+      <div>
+        Title: <a href='albums/{{ item.album_id }}'>{{ item.title}}</a>
+        Released: {{ item.release_year}}
+      </div>
+      {% endfor %}
+    
+
+
+  </body>
+</html>

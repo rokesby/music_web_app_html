@@ -1,0 +1,37 @@
+<!-- This is a HTML document -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>New album form</title>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    
+    <h1>Add a new album</h1>
+    <form action="/albums" method = "POST">
+        
+        {% if errors %}
+        <p class="t-errors">
+            Your submission contains errors:
+            {{ errors }}
+        </p>
+        {% endif %}
+
+        <p>
+            <label for="title">Title</label>
+            <br>
+            <input type="text" name="title" id="title">
+        </p>
+        <p>
+            <label for="release_year">Release year</label>
+            <br>
+            <input type="text" name="release_year" id="release_year">
+        </p>
+
+        <p>
+            <input type="Submit" value="Add album">
+        </p>
+    </form>
+
+  </body>
+</html>

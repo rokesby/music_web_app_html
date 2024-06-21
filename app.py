@@ -29,7 +29,7 @@ def get_emoji():
 
 
 
-
+# Music Albums work......
 
 # Now using a path parameter.....
 @app.route('/albums/<id>')
@@ -38,10 +38,6 @@ def get_album_specific(id):
     repository = AlbumRepository(connection)
     album = repository.get_album_specific(id)
     return render_template('album_specific.html', album=album)
-
-
-
-
 
 # POST /albums
 # Stores a new album.
@@ -52,6 +48,8 @@ def get_album_new():
 
 def is_album_valid():
     return True
+# Implement validation logic later.
+
 
 @app.route('/albums', methods=['POST'])
 def create_album():
@@ -59,22 +57,14 @@ def create_album():
     repository = AlbumRepository(connection)
 
     newAlbum = Album(request.form['title'], request.form['release_year'], 1)
-    #newAlbum.release_year = request.form['release_year']
-    #newAlbum.title = request.form['title']
 
     if not newAlbum.is_album_valid():
         errors = newAlbum.generate_errors()
         return render_template("albums_new.html", errors=errors)
     else:
-        #title= request.form['title']
-        #release_year = int(request.form['release_year'])
         album = Album(newAlbum.get_valid_title(), newAlbum.get_valid_release_year(), 1)
         repository.create(album)    
         return redirect(f"/albums/{album.id}")
-
-
-    
-    
 
 # GET /albums
 # Produces a list of albums for a web site.
@@ -89,9 +79,6 @@ def get_albums():
     repository = AlbumRepository(Connection)
     albums = repository.all()
     return render_template('albums.html', albums=albums)
-
-
-
 
 
 
@@ -123,10 +110,48 @@ def get_artist_specific(id):
 from example_routes import apply_example_routes
 apply_example_routes(app)
 
+'''
+    https://journey.makers.tech/pages/extension-challenge-creating-and-authenticating-users
+
+'''
+
+# Login route - capture
+@app.route('/login', methods=['GET'])
+def display_login_page():
+    return render_template('login.html')
+
+
+import hashlib
+from flask import session
+
+# Login route - process
+@app.route('/login', methods=['POST'])
+def process_login():
+
+    def is_valid_user(username, password):
+        
+        # Hash the password
+        binary_password = password.encode("utf-8")
+        hashed_password = hashlib.sha256(binary_password).hexdigest()
+
+        return hashed_password == hashlib.sha256('s3cretp4ss'.encode("utf-8")).hexdigest()
+
+
+    username = request.form['username']
+    password = request.form['password']
+
+    # Compare the password via a hash and if successful, store the login via a session
+    if is_valid_user(username, password):
+        session['user_id'] = username
+        return render_template('login_success.html',  user_id = username)
+    else:
+        return render_template('login_failure.html')
+    
 
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
 # if started in test mode.
 if __name__ == '__main__':
+    app.secret_key = "super secret key"
     app.run(debug=True, port=int(os.environ.get('PORT', 5001)))
